@@ -593,12 +593,12 @@
             </div>
         </header>
 
-        <div class="section-title">✨ 최종 6인 후보</div>
+        <div class="section-title">✨ 최종 6팀 후보</div>
         <div class="finalists-grid" id="finalists">
             <div class="loading">로딩 중...</div>
         </div>
 
-        <div class="section-title">👥 전체 참석자</div>
+        <div class="section-title">👥 전체 참석팀</div>
         <div class="participants-grid" id="participants">
             <div class="loading">로딩 중...</div>
         </div>
@@ -1093,12 +1093,12 @@
             });
             console.log('최종 후보 렌더링 완료');
 
-            // 전체 참석자 렌더링 (좋아요 순 정렬)
+            // 전체 참석팀 렌더링 (좋아요 순 정렬)
             const participantsContainer = document.getElementById('participants');
             console.log('participantsContainer:', participantsContainer);
             participantsContainer.innerHTML = '';
             
-            // 전체 참석자를 좋아요 순으로 정렬
+            // 전체 참석팀을 좋아요 순으로 정렬
             const sortedParticipants = [...allParticipants].sort((a, b) => {
                 const aProjectId = `p${a.num}`;
                 const bProjectId = `p${b.num}`;
@@ -1110,7 +1110,7 @@
             sortedParticipants.forEach((participant, index) => {
                 participantsContainer.appendChild(createProjectCard(participant, false, index + 1));
             });
-            console.log('전체 참석자 렌더링 완료');
+            console.log('전체 참석팀 렌더링 완료');
 
             setupEventListeners();
             console.log('이벤트 리스너 설정 완료');
