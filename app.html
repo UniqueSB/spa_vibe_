@@ -590,31 +590,23 @@
         }
 
         // 기기 고유 ID 생성
+        function createRandomDeviceId() {
+            if (window.crypto && window.crypto.randomUUID) {
+                return 'dev_' + window.crypto.randomUUID();
+            }
+            return 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+        }
+
         function getDeviceId() {
             let deviceId = localStorage.getItem('deviceId');
-            if (!deviceId) {
-                const nav = navigator;
-                const screen = window.screen;
-                const fingerprint = [
-                    nav.userAgent,
-                    nav.language,
-                    screen.width,
-                    screen.height,
-                    screen.colorDepth,
-                    new Date().getTimezoneOffset(),
-                    nav.hardwareConcurrency,
-                    nav.platform
-                ].join('|');
-                
-                let hash = 0;
-                for (let i = 0; i < fingerprint.length; i++) {
-                    const char = fingerprint.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
-                }
-                deviceId = 'dev_' + Math.abs(hash).toString(36);
+
+            // 과거 지문 기반 ID(dev_xxx)는 충돌 가능성이 있어 1회 마이그레이션
+            const isLegacyId = deviceId && !deviceId.includes('-');
+            if (!deviceId || isLegacyId) {
+                deviceId = createRandomDeviceId();
                 localStorage.setItem('deviceId', deviceId);
             }
+
             return deviceId;
         }
 
@@ -962,8 +954,8 @@
             }
         }
 
-        function createProjectCard(project, isFinalist = false, number = null) {
-            const projectId = project.id || `p${number}`;
+        function createProjectCard(project, isFinalist = false, rank = null) {
+            const projectId = project.id || `p${project.num}`;
             const likeCount = likes[projectId] || 0;
             const projectComments = comments[projectId] || [];
 
@@ -972,7 +964,7 @@
             
             card.innerHTML = `
                 ${isFinalist ? '<div class="finalist-badge">🌟 FINALIST</div>' : ''}
-                ${number ? `<div class="project-number">#${number}</div>` : ''}
+                ${rank ? `<div class="project-number">#${rank}</div>` : ''}
                 <div class="project-title">${project.title}</div>
                 <div class="project-author">👤 ${project.author}</div>
                 <div class="project-description">${project.description}</div>
@@ -1056,8 +1048,8 @@
                 return bLikes - aLikes;
             });
             
-            sortedParticipants.forEach(participant => {
-                participantsContainer.appendChild(createProjectCard(participant, false, participant.num));
+            sortedParticipants.forEach((participant, index) => {
+                participantsContainer.appendChild(createProjectCard(participant, false, index + 1));
             });
             console.log('전체 참석자 렌더링 완료');
 
