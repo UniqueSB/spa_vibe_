@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding 대회 - One Click AI Coding Challenge</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-1: #f4f8fb;
+            --bg-2: #e9f0f7;
+            --ink-900: #0f172a;
+            --ink-700: #334155;
+            --ink-500: #64748b;
+            --line: #d9e3ee;
+            --surface: #ffffff;
+            --surface-soft: #f8fbff;
+            --brand: #0f766e;
+            --brand-strong: #115e59;
+            --accent: #f59e0b;
+            --danger: #e11d48;
+            --shadow: 0 12px 35px rgba(15, 23, 42, 0.1);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+            color: var(--ink-900);
+            min-height: 100vh;
+            padding: 12px;
+            font-size: 14px;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(15, 118, 110, 0.12), transparent 35%),
+                radial-gradient(circle at 85% 5%, rgba(245, 158, 11, 0.1), transparent 40%),
+                linear-gradient(180deg, var(--bg-1), var(--bg-2));
+        }
+
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.92));
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 24px 14px;
+            margin-bottom: 22px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlideIn 0.55s ease-out;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            inset: auto -30% -40% auto;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(15, 118, 110, 0.12), transparent 60%);
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-size: 1.9em;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: var(--ink-900);
+        }
+
+        header h2 {
+            font-size: 0.98em;
+            color: var(--ink-700);
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .section-title {
+            color: var(--ink-900);
+            font-size: 1.18em;
+            margin: 26px 0 14px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            backdrop-filter: blur(10px);
+            animation: fadeSlideIn 0.6s ease-out;
+        }
+
+        .finalists-grid,
+        .participants-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .finalists-grid {
+            margin-bottom: 30px;
+        }
+
+        .project-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid #dce6f0;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            animation: cardStagger 0.45s ease both;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+            border-color: #bfd1e3;
+        }
+
+        .project-card:active {
+            transform: translateY(-2px);
+        }
+
+        .finalist-card {
+            border: 1px solid #f7d48a;
+            background: linear-gradient(165deg, #ffffff 0%, #fffbef 100%);
+            box-shadow: 0 10px 26px rgba(245, 158, 11, 0.2);
+        }
+
+        .finalist-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #3f2a00;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.68em;
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
+            letter-spacing: 0.03em;
+        }
+
+        .project-number {
+            display: inline-flex;
+            width: fit-content;
+            font-size: 0.8em;
+            color: var(--brand-strong);
+            font-weight: 800;
+            margin-bottom: 8px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid #99d6d0;
+            background: #effcf9;
+        }
+
+        .project-title {
+            font-size: 1.13em;
+            color: var(--ink-900);
+            margin-bottom: 8px;
+            font-weight: 800;
+            line-height: 1.35;
+            letter-spacing: -0.01em;
+        }
+
+        .finalist-card .project-title {
+            padding-right: 94px;
+            color: #7c4a03;
+        }
+
+        .project-author {
+            color: var(--brand-strong);
+            font-size: 0.88em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .project-description {
+            color: var(--ink-700);
+            line-height: 1.65;
+            margin-bottom: 14px;
+            font-size: 0.92em;
+            padding: 12px;
+            background: var(--surface-soft);
+            border-radius: var(--radius-md);
+            border: 1px solid #deebf7;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 44px;
+            font-weight: 700;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(130deg, var(--brand), #0e9488);
+            color: #ffffff;
+            flex: 1;
+            box-shadow: 0 8px 20px rgba(15, 118, 110, 0.28);
+        }
+
+        .btn-like {
+            background: #ffffff;
+            border: 1px solid #f6b5c3;
+            color: var(--danger);
+            padding: 10px 16px;
+            min-width: 76px;
+        }
+
+        .btn-like.liked {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.28);
+        }
+
+        .like-count {
+            font-weight: 800;
+        }
+
+        .comment-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e3ecf5;
+        }
+
+        .comment-toggle {
+            background: #f7fbff;
+            border: 1px solid #d5e5f4;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s ease;
+            font-size: 0.9em;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e3a5f;
+            font-weight: 700;
+        }
+
+        .comment-toggle:hover {
+            border-color: #9ec3e5;
+            background: #f1f8ff;
+        }
+
+        .comment-box {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .comment-box.active {
+            display: block;
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .comment-name-input {
+            flex: 1;
+        }
+
+        .comment-password-input {
+            width: 120px;
+        }
+
+        .comment-input,
+        .comment-name-input,
+        .comment-password-input,
+        .delete-password-input {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cddfee;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-family: inherit;
+            font-size: 0.9em;
+            background: #ffffff;
+            color: var(--ink-900);
+        }
+
+        .comment-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .comment-input:focus,
+        .comment-name-input:focus,
+        .comment-password-input:focus,
+        .delete-password-input:focus {
+            outline: none;
+            border-color: #7db7e6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+        }
+
+        .comment-submit {
+            background: linear-gradient(130deg, #0f172a, #1f2937);
+            color: #ffffff;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            min-height: 44px;
+            width: 100%;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+        }
+
+        .comment-submit:hover {
+            transform: translateY(-1px);
+        }
+
+        .comments-list {
+            margin-top: 12px;
+        }
+
+        .comment-item {
+            background: #f8fbff;
+            border: 1px solid #d7e5f3;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .comment-item-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .comment-item-body {
+            flex: 1;
+        }
+
+        .comment-delete-btn {
+            background: #b91c1c;
+            color: #ffffff;
+            border: 1px solid #b91c1c;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-family: inherit;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .comment-delete-btn:hover {
+            background: #991b1b;
+            transform: translateY(-1px);
+        }
+
+        .comment-author {
+            color: #0f766e;
+            font-size: 0.83em;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .comment-text {
+            color: var(--ink-900);
+            margin-bottom: 6px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .comment-time {
+            font-size: 0.75em;
+            color: var(--ink-500);
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardStagger {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 22px;
+                font-size: 16px;
+            }
+
+            header {
+                padding: 34px 26px;
+                margin-bottom: 30px;
+                border-radius: 28px;
+            }
+
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            header h2 {
+                font-size: 1.15em;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+                margin: 34px 0 16px;
+                padding: 14px 18px;
+            }
+
+            .finalists-grid {
+                grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .participants-grid {
+                grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+                gap: 18px;
+            }
+
+            .project-card {
+                padding: 24px;
+            }
+
+            .project-title {
+                font-size: 1.32em;
+            }
+
+            .comment-submit {
+                width: auto;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            header h1 {
+                font-size: 2.9em;
+            }
+
+            .section-title {
+                font-size: 1.75em;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: var(--ink-700);
+            font-size: 1.05em;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Vibe Coding 대회</h1>
+            <h2>One Click AI Coding Challenge - SPA본부</h2>
+        </header>
+
+        <div class="section-title">✨ 최종 6인 후보</div>
+        <div class="finalists-grid" id="finalists">
+            <div class="loading">로딩 중...</div>
+        </div>
+
+        <div class="section-title">👥 전체 참석자</div>
+        <div class="participants-grid" id="participants">
+            <div class="loading">로딩 중...</div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 초기화 (Vercel 환경변수 기반)
+        let SUPABASE_URL = '';
+        let SUPABASE_KEY = '';
+
+        let supabaseClient = null;
+        let useSupabase = false;
+
+        async function loadSupabaseConfig() {
+            try {
+                const response = await fetch('/api/config', { cache: 'no-store' });
+                if (!response.ok) {
+                    return { SUPABASE_URL: '', SUPABASE_KEY: '' };
+                }
+                const config = await response.json();
+                return {
+                    SUPABASE_URL: config.SUPABASE_URL || '',
+                    SUPABASE_KEY: config.SUPABASE_KEY || ''
+                };
+            } catch (error) {
+                console.warn('원격 설정 로드 실패, 로컬 모드로 진행:', error.message);
+                return { SUPABASE_URL: '', SUPABASE_KEY: '' };
+            }
+        }
+
+        async function initializeSupabase() {
+            const config = await loadSupabaseConfig();
+            SUPABASE_URL = config.SUPABASE_URL;
+            SUPABASE_KEY = config.SUPABASE_KEY;
+
+            if (SUPABASE_URL && SUPABASE_KEY && SUPABASE_URL.includes('supabase.co')) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                useSupabase = true;
+                console.log('Supabase 연결됨');
+            } catch (error) {
+                console.error('Supabase 연결 실패:', error);
+                console.log('로컬 스토리지 사용');
+            }
+            } else {
+                console.log('로컬 스토리지 모드로 실행');
+            }
+        }
+
+        // 기기 고유 ID 생성
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('deviceId');
+            if (!deviceId) {
+                const nav = navigator;
+                const screen = window.screen;
+                const fingerprint = [
+                    nav.userAgent,
+                    nav.language,
+                    screen.width,
+                    screen.height,
+                    screen.colorDepth,
+                    new Date().getTimezoneOffset(),
+                    nav.hardwareConcurrency,
+                    nav.platform
+                ].join('|');
+                
+                let hash = 0;
+                for (let i = 0; i < fingerprint.length; i++) {
+                    const char = fingerprint.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                deviceId = 'dev_' + Math.abs(hash).toString(36);
+                localStorage.setItem('deviceId', deviceId);
+            }
+            return deviceId;
+        }
+
+        // 귀여운 익명 닉네임 생성
+        function generateCuteName() {
+            const prefixes = ['꼬물꼬물', '아기', '통통', '복슬복슬', '말랑말랑', '포근포근', '폭신폭신', '반짝반짝', '쫑긋쫑긋', '보들보들'];
+            const animals = ['판다', '펭귄', '고양이', '강아지', '토끼', '햄스터', '다람쥐', '여우', '코알라', '수달'];
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const animal = animals[Math.floor(Math.random() * animals.length)];
+            const num = Math.floor(Math.random() * 999);
+            return `${prefix} ${animal} ${num}`;
+        }
+
+        function generateSimplePassword() {
+            return Math.floor(1000 + Math.random() * 9000).toString(); // 4자리 숫자
+        }
+
+        const deviceId = getDeviceId();
+
+        const finalists = [
+            {
+                id: 'f1',
+                title: 'Alliance-tinder / SPITFIRE',
+                author: '변교영',
+                description: 'KT 전략 부서를 위한 파트너십 의사결정 8축 프레임워크. 실시간 뉴스 시그널, 가중치 시뮬레이션 등 B2B 전략 도구로 최상위 완성도',
+                url: 'https://spitfire-eta.vercel.app/'
+            },
+            {
+                id: 'f2',
+                title: 'AI Knowledge Factory (JH-English)',
+                author: '전승화',
+                description: '1,271개 SAT 단어를 134개 어원으로 체계화. 방대한 콘텐츠와 구조적 학습 경로를 갖춘 전문 교육 플랫폼',
+                url: 'https://jh-english-master.vercel.app/'
+            },
+            {
+                id: 'f3',
+                title: '신호와소음 팀 (YouTube Signal)',
+                author: '이민진, 유선경',
+                description: '구독 유튜브 영상 AI 요약 + 관련 뉴스 연동. 정보 과부하 시대의 신호 분리 컨셉이 명확',
+                url: 'https://vibetest-yt-drcq.vercel.app/'
+            },
+            {
+                id: 'f4',
+                title: 'CallMind',
+                author: '정용기, 이선기',
+                description: 'AI 감정 분석 및 멘탈 헬스케어 플랫폼. 7일 감정 추이, 맞춤형 힐링 액션 추천으로 사회적 가치와 완성도 우수',
+                url: 'https://callmind-web.vercel.app'
+            },
+            {
+                id: 'f5',
+                title: 'Contract Intelligence',
+                author: '강보배',
+                description: 'AI 기반 계약서 분석 리걸테크. B2B 시장성은 높으나 실제 구현 확인 제한적',
+                url: 'https://contract-kt-palantir.vercel.app'
+            },
+            {
+                id: 'f6',
+                title: 'FridgeCook AI (냉장고 털기)',
+                author: '박용주, 고동석',
+                description: 'Claude AI 기반 냉장고 재료 레시피 추천 + 2~3일 식단 플랜. 실용성과 완성도가 매우 높은 일상 솔루션',
+                url: 'https://fridgecook-eight.vercel.app'
+            }
+        ];
+
+        const allParticipants = [
+            { num: 1, title: 'KT 직원을 위한 오늘의 AI 점심 메뉴 추천기', author: '김세준', description: 'KT 광화문 주변 132개 맛집에서 실시간 날씨와 기분 상태를 고려한 AI 맞춤형 점심 메뉴 추천 서비스 (AI 분석)', url: 'https://kt-lunch.vercel.app' },
+            { num: 2, title: 'AI 미니미 룸 빌더', author: '최병찬', description: '셀카 한 장으로 10초 만에 5가지 스타일의 미니어처 아바타를 생성하고 가상 공간을 꾸밀 수 있는 감성 SNS 콘텐츠 제작 툴 (AI 분석)', url: 'https://myminiroom.vercel.app' },
+            { num: 3, title: 'QuantView AI Screener', author: '서진우', description: '미국 주식 시장(S&P 500, DOW, NASDAQ) 실시간 데이터 제공 및 섹터별 P/E 분석 대시보드로 투자 의사결정 지원 (AI 분석)', url: 'https://v0-market-dashboard-vibe.vercel.app' },
+            { num: 4, title: 'EPIC*: The 10-Year Blueprint', author: '설재한', description: '15문항 10분 설문으로 120개월(10년) 유학 로드맵을 설계하는 AI 유학 컨설팅. 학교 추천부터 취업까지 생애주기 전체 관리 (AI 분석)', url: 'https://kt-seol.vercel.app/edupath/' },
+            { num: 5, title: 'LiBee - 어린이 도서 중고 직거래', author: '서무성', description: '0~3세부터 초등 고학년까지 연령대별 유아동 중고도서 직거래 마켓. 동네 이웃 간 안전한 책 거래 플랫폼 (AI 분석)', url: 'https://libee-one.vercel.app' },
+            { num: 6, title: 'Running Vibe', author: '황진경', description: '러닝 케이던스(SPM)에 최적화된 음악 추천 서비스. 날씨, 코스 유형을 반영해 조깅부터 인터벌까지 맞춤형 플레이리스트 제공 (AI 분석)', url: 'https://v0-music-recommendation-app-mu.vercel.app/' },
+            { num: 7, title: 'Multi-Agent System - 타로 상담', author: '권태우', description: '78장 타로 카드 기반 AI 상담 시스템. 3카드 스프레드와 켈틱 크로스 등 다양한 리딩 방식으로 자기성찰 도구 제공 (AI 분석)', url: 'https://vibecoding-project-001.vercel.app' },
+            { num: 8, title: 'ReMemory Clip', author: '류다혜', description: '삼성전자와 SK하이닉스 반도체 투자 전문 대시보드. 시장 심리, 변동성, 환율 분석 및 AI 기반 내일 주가 예측 기능 (AI 분석)', url: 'https://rememort-clip.vercel.app/dashboard' },
+            { num: 9, title: 'Lazy Menu - 음성 메뉴판 시스템', author: '박소영', description: '카페 사장님을 위한 음성 명령 기반 디지털 메뉴판. "품절", "가격 인상" 등 말 한마디로 e잉크 메뉴판과 POS 실시간 연동 (AI 분석)', url: 'https://cafe-menu-three-beta.vercel.app' },
+            { num: 10, title: '웨얼아파You (1592)', author: '심상익, 최승재', description: '주식과 코인 등 분산된 자산을 한 곳에서 통합 관리하는 실시간 수익률 추적 및 포트폴리오 분석 플랫폼 (AI 분석)', url: 'https://asset-henna.vercel.app' },
+            { num: 13, title: '세대공감 사전 - 직장 언어 퀴즈', author: '이현정', description: '판교어, MZ어, 통신사어, 임원어 등 세대별 직장 용어를 퀴즈로 학습하여 세대 간 커뮤니케이션 장벽을 해소하는 교육 툴 (AI 분석)', url: 'https://quiz-app-plum-theta.vercel.app' },
+            { num: 15, title: 'LunchMate AI', author: '김진옥', description: 'AI 기반 점심 메뉴 추천 및 식사 메이트 매칭 서비스. 개인 선호도와 위치 기반 맞춤형 추천 제공 (AI 분석)', url: 'https://lunchmateai.vercel.app' },
+            { num: 16, title: 'WOD - AI 건강 최적화 운동', author: '이재왕', description: '개인 건강 프로파일(회복 점수, 부상 이력)을 반영한 AI 맞춤형 크로스핏 운동 처방. Strength, METCON, Mobility 4블록 구성 (AI 분석)', url: 'https://v0-counter-app-design-pi.vercel.app/wod' },
+            { num: 18, title: 'Seoul Hiking Navigator', author: '박용주', description: '서울 및 수도권 등산로 추천 및 네비게이션 서비스. 난이도별 코스 안내와 실시간 경로 정보 제공 (AI 분석)', url: 'https://seoulhikingnavi.vercel.app' },
+            { num: 19, title: 'Travel Diary - 여행 기록 자동화', author: '정철범', description: 'GPS 기반 동선 추적으로 여행 경로를 자동 기록하고 사진과 함께 타임라인 형식의 여행 다이어리를 생성하는 서비스 (AI 분석)', url: 'https://running-map-mu.vercel.app' },
+            { num: 20, title: 'Lunch Logic Model', author: '정영훈', description: '직장인 점심 의사결정을 최적화하는 AI 논리 모델. 예산, 시간, 선호도를 종합적으로 분석하여 최선의 선택지 제시 (AI 분석)', url: 'https://statics.teams.cdn.office.net/evergreen-assets/safelinks/2/atp-safelinks.html' },
+            { num: 22, title: 'SIGNAL - AI 성장주 투자 플랫폼', author: '정혜경', description: 'AI 기반 성장주 발굴 및 포트폴리오 관리 플랫폼. 종목 스크리닝, 투자 인사이트, 자산 추적 통합 솔루션 (AI 분석)', url: 'https://thesis-app-ten.vercel.app/' }
+        ];
+
+        // 로컬 스토리지 기본 함수
+        function loadDataLocal(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveDataLocal(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Supabase 함수들
+        async function getLikesFromSupabase() {
+            if (!useSupabase) return {};
+            try {
+                const { data, error } = await supabaseClient
+                    .from('project_likes')
+                    .select('*');
+                if (error) throw error;
+                
+                const likes = {};
+                data.forEach(item => {
+                    likes[item.project_id] = item.like_count;
+                });
+                return likes;
+            } catch (error) {
+                console.error('좋아요 로드 실패:', error);
+                return {};
+            }
+        }
+
+        async function addLikeToSupabase(projectId) {
+            if (!useSupabase) return false;
+            try {
+                // 먼저 현재 좋아요 수 가져오기
+                const { data: existing } = await supabaseClient
+                    .from('project_likes')
+                    .select('*')
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (existing) {
+                    // 업데이트
+                    const { error } = await supabaseClient
+                        .from('project_likes')
+                        .update({ like_count: existing.like_count + 1 })
+                        .eq('project_id', projectId);
+                    if (error) throw error;
+                } else {
+                    // 새로 생성
+                    const { error } = await supabaseClient
+                        .from('project_likes')
+                        .insert([{ project_id: projectId, like_count: 1 }]);
+                    if (error) throw error;
+                }
+
+                // 기기별 좋아요 기록 (중복 체크)
+                const { data: deviceLike } = await supabaseClient
+                    .from('device_likes')
+                    .select('*')
+                    .eq('device_id', deviceId)
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (!deviceLike) {
+                    // 새 기록만 추가
+                    const { error: deviceError } = await supabaseClient
+                        .from('device_likes')
+                        .insert([{ device_id: deviceId, project_id: projectId }]);
+                    
+                    if (deviceError && deviceError.code !== '23505') throw deviceError;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('좋아요 추가 실패:', error);
+                return false;
+            }
+        }
+
+        async function removeLikeFromSupabase(projectId) {
+            if (!useSupabase) return false;
+            try {
+                // 좋아요 수 감소
+                const { data: existing } = await supabaseClient
+                    .from('project_likes')
+                    .select('*')
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (existing && existing.like_count > 0) {
+                    const { error } = await supabaseClient
+                        .from('project_likes')
+                        .update({ like_count: existing.like_count - 1 })
+                        .eq('project_id', projectId);
+                    if (error) throw error;
+                }
+
+                // 기기별 좋아요 기록 삭제
+                const { error: deviceError } = await supabaseClient
+                    .from('device_likes')
+                    .delete()
+                    .eq('device_id', deviceId)
+                    .eq('project_id', projectId);
+                
+                return true;
+            } catch (error) {
+                console.error('좋아요 취소 실패:', error);
+                return false;
+            }
+        }
+
+        async function checkDeviceLiked(projectId) {
+            if (!useSupabase) return false;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('device_likes')
+                    .select('*')
+                    .eq('device_id', deviceId)
+                    .eq('project_id', projectId);
+                
+                return data && data.length > 0;
+            } catch (error) {
+                console.error('좋아요 확인 실패:', error);
+                return false;
+            }
+        }
+
+        async function getDeviceLikedProjectsFromSupabase() {
+            if (!useSupabase) return {};
+            try {
+                // 한 번에 모든 기기별 좋아요 로드 (개별 요청 대신)
+                const { data, error } = await supabaseClient
+                    .from('device_likes')
+                    .select('*')
+                    .eq('device_id', deviceId);
+                
+                if (error) throw error;
+                
+                const liked = {};
+                data.forEach(item => {
+                    liked[item.project_id] = true;
+                });
+                return liked;
+            } catch (error) {
+                console.error('기기별 좋아요 확인 실패:', error);
+                return {};
+            }
+        }
+
+        async function getCommentsFromSupabase() {
+            if (!useSupabase) return {};
+            try {
+                const { data, error } = await supabaseClient
+                    .from('comments')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                const comments = {};
+                data.forEach(item => {
+                    if (!comments[item.project_id]) {
+                        comments[item.project_id] = [];
+                    }
+                    comments[item.project_id].push({
+                        id: item.id,
+                        author: item.author,
+                        text: item.text,
+                        password: item.password,
+                        time: new Date(item.created_at).toLocaleString('ko-KR')
+                    });
+                });
+                return comments;
+            } catch (error) {
+                console.error('댓글 로드 실패:', error);
+                return {};
+            }
+        }
+
+        async function addCommentToSupabase(projectId, author, text, password) {
+            if (!useSupabase) return null;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('comments')
+                    .insert([{
+                        project_id: projectId,
+                        author: author,
+                        text: text,
+                        password: password
+                    }])
+                    .select();
+                
+                if (error) throw error;
+                return data && data.length > 0 ? data[0] : null;
+            } catch (error) {
+                console.error('댓글 추가 실패:', error);
+                return null;
+            }
+        }
+
+        async function deleteCommentFromSupabase(commentId, password) {
+            if (!useSupabase) return false;
+            try {
+                // 먼저 비밀번호 확인
+                const { data: comment, error: fetchError } = await supabaseClient
+                    .from('comments')
+                    .select('password')
+                    .eq('id', commentId)
+                    .single();
+
+                if (fetchError || !comment) {
+                    console.error('댓글을 찾을 수 없습니다');
+                    return false;
+                }
+
+                if (comment.password !== password) {
+                    alert('비밀번호가 일치하지 않습니다');
+                    return false;
+                }
+
+                // 비밀번호가 일치하면 삭제
+                const { error: deleteError } = await supabaseClient
+                    .from('comments')
+                    .delete()
+                    .eq('id', commentId);
+
+                if (deleteError) throw deleteError;
+                return true;
+            } catch (error) {
+                console.error('댓글 삭제 실패:', error);
+                return false;
+            }
+        }
+
+        // 데이터 로드 (Supabase 또는 로컬)
+        let likes = {};
+        let likedProjects = {};
+        let comments = {};
+
+        async function loadAllData() {
+            try {
+                if (useSupabase) {
+                    // 병렬 처리: 3개 요청을 동시에 실행 (개별 요청 대신)
+                    [likes, comments, likedProjects] = await Promise.all([
+                        getLikesFromSupabase(),
+                        getCommentsFromSupabase(),
+                        getDeviceLikedProjectsFromSupabase()
+                    ]);
+                } else {
+                    likes = loadDataLocal('likes');
+                    likedProjects = loadDataLocal('likedProjects_' + deviceId) || {};
+                    comments = loadDataLocal('comments');
+                }
+            } catch (error) {
+                console.error('데이터 로드 실패, 로컬 스토리지 사용:', error);
+                // 에러 발생 시 로컬 스토리지로 폴백
+                likes = loadDataLocal('likes');
+                likedProjects = loadDataLocal('likedProjects_' + deviceId) || {};
+                comments = loadDataLocal('comments');
+                useSupabase = false;
+            }
+        }
+
+        function createProjectCard(project, isFinalist = false, number = null) {
+            const projectId = project.id || `p${number}`;
+            const likeCount = likes[projectId] || 0;
+            const projectComments = comments[projectId] || [];
+
+            const card = document.createElement('div');
+            card.className = `project-card ${isFinalist ? 'finalist-card' : ''}`;
+            
+            card.innerHTML = `
+                ${isFinalist ? '<div class="finalist-badge">🌟 FINALIST</div>' : ''}
+                ${number ? `<div class="project-number">#${number}</div>` : ''}
+                <div class="project-title">${project.title}</div>
+                <div class="project-author">👤 ${project.author}</div>
+                <div class="project-description">${project.description}</div>
+                <div class="project-actions">
+                    <a href="${project.url}" target="_blank" class="btn btn-primary">
+                        🔗 프로젝트 보기
+                    </a>
+                    <button class="btn btn-like ${likedProjects[projectId] ? 'liked' : ''}" data-id="${projectId}">
+                        <span class="like-icon">❤️</span>
+                        <span class="like-count">${likeCount}</span>
+                    </button>
+                </div>
+                <div class="comment-section">
+                    <div class="comment-toggle" data-id="${projectId}">
+                        💬 댓글 ${projectComments.length > 0 ? `(${projectComments.length})` : '쓰기'}
+                    </div>
+                    <div class="comment-box" data-id="${projectId}">
+                        <div class="comment-input-row">
+                            <input type="text" class="comment-name-input" placeholder="귀여운 이름 (자동생성)" data-id="${projectId}">
+                            <input type="password" class="comment-password-input" placeholder="비밀번호 (4자리)" data-id="${projectId}" maxlength="4">
+                        </div>
+                        <textarea class="comment-input" placeholder="댓글을 입력하세요..." data-id="${projectId}"></textarea>
+                        <button class="comment-submit" data-id="${projectId}">댓글 등록</button>
+                        <div class="comments-list" data-id="${projectId}">
+                            ${projectComments.map((c, idx) => `
+                                <div class="comment-item" data-comment-id="${c.id || idx}">
+                                    <div class="comment-item-head">
+                                        <div class="comment-item-body">
+                                            <div class="comment-author">👤 ${c.author}</div>
+                                            <div class="comment-text">${c.text}</div>
+                                            <div class="comment-time">${c.time}</div>
+                                        </div>
+                                        <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${c.id || idx}">삭제</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        async function renderProjects() {
+            console.log('renderProjects 시작');
+            console.log('finalists 개수:', finalists.length);
+            console.log('allParticipants 개수:', allParticipants.length);
+            
+            await loadAllData();
+            console.log('데이터 로드 완료');
+
+            // 최종 후보 렌더링 (좋아요 순 정렬)
+            const finalistsContainer = document.getElementById('finalists');
+            console.log('finalistsContainer:', finalistsContainer);
+            finalistsContainer.innerHTML = '';
+            
+            // 최종 후보를 좋아요 순으로 정렬
+            const sortedFinalists = [...finalists].sort((a, b) => {
+                const aLikes = likes[a.id] || 0;
+                const bLikes = likes[b.id] || 0;
+                return bLikes - aLikes;
+            });
+            
+            sortedFinalists.forEach(finalist => {
+                finalistsContainer.appendChild(createProjectCard(finalist, true));
+            });
+            console.log('최종 후보 렌더링 완료');
+
+            // 전체 참석자 렌더링 (좋아요 순 정렬)
+            const participantsContainer = document.getElementById('participants');
+            console.log('participantsContainer:', participantsContainer);
+            participantsContainer.innerHTML = '';
+            
+            // 전체 참석자를 좋아요 순으로 정렬
+            const sortedParticipants = [...allParticipants].sort((a, b) => {
+                const aProjectId = `p${a.num}`;
+                const bProjectId = `p${b.num}`;
+                const aLikes = likes[aProjectId] || 0;
+                const bLikes = likes[bProjectId] || 0;
+                return bLikes - aLikes;
+            });
+            
+            sortedParticipants.forEach(participant => {
+                participantsContainer.appendChild(createProjectCard(participant, false, participant.num));
+            });
+            console.log('전체 참석자 렌더링 완료');
+
+            setupEventListeners();
+            console.log('이벤트 리스너 설정 완료');
+        }
+
+        function setupEventListeners() {
+            // 좋아요 기능 (토글 방식)
+            document.querySelectorAll('.btn-like').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const projectId = btn.dataset.id;
+                    
+                    // 이미 좋아요를 눌렀다면 취소
+                    if (likedProjects[projectId]) {
+                        if (useSupabase) {
+                            const success = await removeLikeFromSupabase(projectId);
+                            if (success) {
+                                likes[projectId] = Math.max(0, (likes[projectId] || 0) - 1);
+                                likedProjects[projectId] = false;
+                                btn.classList.remove('liked');
+                                btn.querySelector('.like-count').textContent = likes[projectId];
+                            }
+                        } else {
+                            likes[projectId] = Math.max(0, (likes[projectId] || 0) - 1);
+                            likedProjects[projectId] = false;
+                            btn.classList.remove('liked');
+                            btn.querySelector('.like-count').textContent = likes[projectId];
+                            saveDataLocal('likes', likes);
+                            saveDataLocal('likedProjects_' + deviceId, likedProjects);
+                        }
+                    } else {
+                        // 좋아요 추가
+                        if (useSupabase) {
+                            const success = await addLikeToSupabase(projectId);
+                            if (success) {
+                                likes[projectId] = (likes[projectId] || 0) + 1;
+                                likedProjects[projectId] = true;
+                                btn.classList.add('liked');
+                                btn.querySelector('.like-count').textContent = likes[projectId];
+                            }
+                        } else {
+                            likes[projectId] = (likes[projectId] || 0) + 1;
+                            likedProjects[projectId] = true;
+                            btn.classList.add('liked');
+                            btn.querySelector('.like-count').textContent = likes[projectId];
+                            saveDataLocal('likes', likes);
+                            saveDataLocal('likedProjects_' + deviceId, likedProjects);
+                        }
+                    }
+                });
+            });
+
+            // 댓글 토글
+            document.querySelectorAll('.comment-toggle').forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const projectId = toggle.dataset.id;
+                    const commentBox = document.querySelector(`.comment-box[data-id="${projectId}"]`);
+                    commentBox.classList.toggle('active');
+                });
+            });
+
+            // 댓글 등록
+            document.querySelectorAll('.comment-submit').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const projectId = btn.dataset.id;
+                    const textInput = document.querySelector(`.comment-input[data-id="${projectId}"]`);
+                    const nameInput = document.querySelector(`.comment-name-input[data-id="${projectId}"]`);
+                    const passwordInput = document.querySelector(`.comment-password-input[data-id="${projectId}"]`);
+                    
+                    const text = textInput.value.trim();
+                    let author = nameInput.value.trim();
+                    const password = passwordInput.value.trim();
+                    
+                    if (!text) {
+                        alert('댓글 내용을 입력하세요');
+                        return;
+                    }
+                    
+                    if (!password || password.length !== 4 || !/^\d{4}$/.test(password)) {
+                        alert('4자리 숫자 비밀번호를 입력하세요');
+                        return;
+                    }
+                    
+                    // 이름이 비어있으면 자동 생성
+                    if (!author) {
+                        author = generateCuteName();
+                        nameInput.value = author;
+                    }
+                    
+                    const time = new Date().toLocaleString('ko-KR');
+                    
+                    if (useSupabase) {
+                        const newComment = await addCommentToSupabase(projectId, author, text, password);
+                        if (newComment) {
+                            if (!comments[projectId]) {
+                                comments[projectId] = [];
+                            }
+                            const commentData = {
+                                id: newComment.id,
+                                author,
+                                text,
+                                password,
+                                time: new Date(newComment.created_at).toLocaleString('ko-KR')
+                            };
+                            comments[projectId].push(commentData);
+                            
+                            const commentsList = document.querySelector(`.comments-list[data-id="${projectId}"]`);
+                            const commentItem = document.createElement('div');
+                            commentItem.className = 'comment-item';
+                            commentItem.setAttribute('data-comment-id', newComment.id);
+                            commentItem.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="flex: 1;">
+                                        <div class="comment-author">👤 ${author}</div>
+                                        <div class="comment-text">${text}</div>
+                                        <div class="comment-time">${commentData.time}</div>
+                                    </div>
+                                    <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${newComment.id}" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">삭제</button>
+                                </div>
+                            `;
+                            commentsList.appendChild(commentItem);
+
+                            const toggle = document.querySelector(`.comment-toggle[data-id="${projectId}"]`);
+                            toggle.textContent = `💬 댓글 (${comments[projectId].length})`;
+
+                            textInput.value = '';
+                            nameInput.value = '';
+                            passwordInput.value = '';
+                            
+                            // 새 삭제 버튼에 이벤트 리스너 추가
+                            setupCommentDeleteListeners();
+                        }
+                    } else {
+                        if (!comments[projectId]) {
+                            comments[projectId] = [];
+                        }
+                        const commentId = Date.now();
+                        const commentData = { id: commentId, author, text, password, time };
+                        comments[projectId].push(commentData);
+                        saveDataLocal('comments', comments);
+
+                        const commentsList = document.querySelector(`.comments-list[data-id="${projectId}"]`);
+                        const commentItem = document.createElement('div');
+                        commentItem.className = 'comment-item';
+                        commentItem.setAttribute('data-comment-id', commentId);
+                        commentItem.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="flex: 1;">
+                                    <div class="comment-author">👤 ${author}</div>
+                                    <div class="comment-text">${text}</div>
+                                    <div class="comment-time">${time}</div>
+                                </div>
+                                <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${commentId}" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">삭제</button>
+                            </div>
+                        `;
+                        commentsList.appendChild(commentItem);
+
+                        const toggle = document.querySelector(`.comment-toggle[data-id="${projectId}"]`);
+                        toggle.textContent = `💬 댓글 (${comments[projectId].length})`;
+
+                        textInput.value = '';
+                        nameInput.value = '';
+                        passwordInput.value = '';
+                        
+                        // 새 삭제 버튼에 이벤트 리스너 추가
+                        setupCommentDeleteListeners();
+                    }
+                });
+            });
+            
+            // 댓글 삭제 버튼 이벤트 설정
+            setupCommentDeleteListeners();
+        }
+        
+        function setupCommentDeleteListeners() {
+            document.querySelectorAll('.comment-delete-btn').forEach(btn => {
+                // 기존 이벤트 리스너 제거 방지
+                btn.replaceWith(btn.cloneNode(true));
+            });
+            
+            document.querySelectorAll('.comment-delete-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const projectId = btn.getAttribute('data-project-id');
+                    const commentId = btn.getAttribute('data-comment-id');
+                    
+                   const password = prompt('댓글 비밀번호를 입력하세요 (4자리):');
+                    if (!password) return;
+                    
+                    if (useSupabase) {
+                        const success = await deleteCommentFromSupabase(commentId, password);
+                        if (success) {
+                            // UI에서 댓글 제거
+                            const commentItem = btn.closest('.comment-item');
+                            commentItem.remove();
+                            
+                            // 메모리에서도 제거
+                            if (comments[projectId]) {
+                                comments[projectId] = comments[projectId].filter(c => c.id != commentId);
+                            }
+                            
+                            // 댓글 수 업데이트
+                            const toggle = document.querySelector(`.comment-toggle[data-id="${projectId}"]`);
+                            const count = comments[projectId] ? comments[projectId].length : 0;
+                            toggle.textContent = count > 0 ? `💬 댓글 (${count})` : '💬 댓글 쓰기';
+                            
+                            alert('댓글이 삭제되었습니다');
+                        }
+                    } else {
+                        // 로컬 스토리지에서 비밀번호 확인
+                        if (comments[projectId]) {
+                            const comment = comments[projectId].find(c => c.id == commentId);
+                            if (comment && comment.password === password) {
+                                // UI에서 댓글 제거
+                                const commentItem = btn.closest('.comment-item');
+                                commentItem.remove();
+                                
+                                // 메모리와 로컬 스토리지에서 제거
+                                comments[projectId] = comments[projectId].filter(c => c.id != commentId);
+                                saveDataLocal('comments', comments);
+                                
+                                // 댓글 수 업데이트
+                                const toggle = document.querySelector(`.comment-toggle[data-id="${projectId}"]`);
+                                const count = comments[projectId].length;
+                                toggle.textContent = count > 0 ? `💬 댓글 (${count})` : '💬 댓글 쓰기';
+                                
+                                alert('댓글이 삭제되었습니다');
+                            } else {
+                                alert('비밀번호가 일치하지 않습니다');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // 페이지 로드 시 실행
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', async () => {
+                console.log('DOM 준비 완료, 프로젝트 렌더링 시작');
+                await initializeSupabase();
+                renderProjects();
+            });
+        } else {
+            console.log('DOM 이미 준비됨, 프로젝트 렌더링 시작');
+            initializeSupabase().then(() => renderProjects());
+        }
+    </script>
+</body>
+</html>

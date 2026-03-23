@@ -1,0 +1,13 @@
+# Local env
+.env
+.env.*
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Optional local runtime config
+config.js
