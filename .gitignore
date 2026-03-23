@@ -10,4 +10,5 @@
 Thumbs.db
 
 # Optional local runtime config
-config.js
+/config.js
+.env*.local
