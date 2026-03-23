@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#grad)"/>
+  <!-- Code brackets -->
+  <text x="25" y="65" font-family="monospace" font-size="40" font-weight="bold" fill="white" text-anchor="middle">&lt;</text>
+  <text x="75" y="65" font-family="monospace" font-size="40" font-weight="bold" fill="white" text-anchor="middle">&gt;</text>
+  <!-- Sparkle -->
+  <circle cx="50" cy="30" r="4" fill="white"/>
+  <circle cx="65" cy="45" r="3" fill="white"/>
+  <circle cx="35" cy="45" r="3" fill="white"/>
+</svg>
