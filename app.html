@@ -1013,10 +1013,19 @@
             }
         }
 
+        function normalizeProjectDescription(description) {
+            if (!description) return '';
+
+            return description
+                .replace(/^<strong>AI 분석<\/strong><br>/, '')
+                .replace(/\s*\(AI 분석\)\s*$/, '');
+        }
+
         function createProjectCard(project, isFinalist = false, rank = null) {
             const projectId = project.id || `p${project.num}`;
             const likeCount = likes[projectId] || 0;
             const projectComments = comments[projectId] || [];
+            const normalizedDescription = normalizeProjectDescription(project.description);
 
             const card = document.createElement('div');
             card.className = `project-card ${isFinalist ? 'finalist-card' : ''}`;
@@ -1026,7 +1035,7 @@
                 ${rank ? `<div class="project-number">#${rank}</div>` : ''}
                 <div class="project-title">${project.title}</div>
                 <div class="project-author">👤 ${project.author}</div>
-                <div class="project-description">${project.description}</div>
+                <div class="project-description"><strong>프로젝트 설명(AI 분석)</strong><br>${normalizedDescription}</div>
                 <div class="project-actions">
                     <a href="${project.url}" target="_blank" class="btn btn-primary">
                         🔗 프로젝트 보기
