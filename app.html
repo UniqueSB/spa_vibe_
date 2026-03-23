@@ -1098,13 +1098,22 @@
             console.log('participantsContainer:', participantsContainer);
             participantsContainer.innerHTML = '';
             
-            // 전체 참석팀을 좋아요 순으로 정렬
+            // 전체 참석팀을 (좋아요 수 + 댓글 수) 순으로 정렬
             const sortedParticipants = [...allParticipants].sort((a, b) => {
                 const aProjectId = `p${a.num}`;
                 const bProjectId = `p${b.num}`;
                 const aLikes = likes[aProjectId] || 0;
                 const bLikes = likes[bProjectId] || 0;
-                return bLikes - aLikes;
+                const aComments = (comments[aProjectId] || []).length;
+                const bComments = (comments[bProjectId] || []).length;
+                const aScore = aLikes + aComments;
+                const bScore = bLikes + bComments;
+
+                // 합산 점수가 같으면 좋아요 수를 우선 비교
+                if (bScore === aScore) {
+                    return bLikes - aLikes;
+                }
+                return bScore - aScore;
             });
             
             sortedParticipants.forEach((participant, index) => {
