@@ -341,25 +341,39 @@
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
+            align-items: center;
         }
 
         .comment-name-input {
             flex: 1;
+            min-width: 0;
+            margin-bottom: 0;
         }
 
         .comment-password-input {
             width: 120px;
+            flex: 0 0 120px;
+            margin-bottom: 0;
         }
 
         .comment-input,
-        .comment-name-input,
-        .comment-password-input,
         .delete-password-input {
             width: 100%;
             padding: 11px 12px;
             border: 1px solid #cddfee;
             border-radius: 10px;
             margin-bottom: 10px;
+            font-family: inherit;
+            font-size: 0.9em;
+            background: #ffffff;
+            color: var(--ink-900);
+        }
+
+        .comment-name-input,
+        .comment-password-input {
+            padding: 11px 12px;
+            border: 1px solid #cddfee;
+            border-radius: 10px;
             font-family: inherit;
             font-size: 0.9em;
             background: #ffffff;
