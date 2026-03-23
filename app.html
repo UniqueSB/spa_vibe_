@@ -52,7 +52,6 @@
         }
 
         header {
-            text-align: center;
             background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.92));
             border: 1px solid rgba(255, 255, 255, 0.8);
             padding: 24px 14px;
@@ -62,6 +61,17 @@
             position: relative;
             overflow: hidden;
             animation: fadeSlideIn 0.55s ease-out;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-title-block {
+            text-align: center;
         }
 
         header::before {
@@ -87,6 +97,31 @@
             color: var(--ink-700);
             font-weight: 600;
             line-height: 1.45;
+        }
+
+        .header-qr {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--ink-700);
+            font-size: 0.78em;
+            font-weight: 700;
+            padding: 8px;
+            border: 1px solid #d8e4f0;
+            border-radius: 14px;
+            background: #ffffff;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+            z-index: 1;
+        }
+
+        .header-qr img {
+            width: 84px;
+            height: 84px;
+            border-radius: 8px;
+            border: 1px solid #d8e4f0;
+            background: #ffffff;
         }
 
         .section-title {
@@ -468,6 +503,22 @@
                 border-radius: 28px;
             }
 
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 18px;
+            }
+
+            .header-title-block {
+                text-align: left;
+            }
+
+            .header-qr img {
+                width: 96px;
+                height: 96px;
+            }
+
             header h1 {
                 font-size: 2.5em;
             }
@@ -530,8 +581,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>🏆 Vibe Coding 대회</h1>
-            <h2>One Click AI Coding Challenge - SPA본부</h2>
+            <div class="header-content">
+                <div class="header-title-block">
+                    <h1>🏆 Vibe Coding 대회</h1>
+                    <h2>One Click AI Coding Challenge - SPA본부</h2>
+                </div>
+                <a class="header-qr" href="https://spavibe.vercel.app" target="_blank" rel="noopener noreferrer" aria-label="배포 링크 QR">
+                    <img src="qr-spavibe.png" alt="배포 링크 QR 코드">
+                    <span>QR로 접속</span>
+                </a>
+            </div>
         </header>
 
         <div class="section-title">✨ 최종 6인 후보</div>
