@@ -236,7 +236,7 @@
         }
 
         .btn-like {
-            background: #ffffff;
+            background: #f8fafc;
             border: 1px solid #d5e2ef;
             color: var(--ink-700);
             padding: 10px 16px;
@@ -245,7 +245,9 @@
 
         .btn-like .like-icon {
             font-weight: 700;
-            color: #64748b;
+            color: inherit;
+            font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+            font-size: 1.02em;
         }
 
         .btn-like.liked {
@@ -386,9 +388,9 @@
         }
 
         .comment-delete-btn {
-            background: #b91c1c;
-            color: #ffffff;
-            border: 1px solid #b91c1c;
+            background: #eef3f8;
+            color: #334155;
+            border: 1px solid #cbd5e1;
             padding: 5px 10px;
             border-radius: 8px;
             cursor: pointer;
@@ -400,7 +402,9 @@
         }
 
         .comment-delete-btn:hover {
-            background: #991b1b;
+            background: #b91c1c;
+            color: #ffffff;
+            border-color: #b91c1c;
             transform: translateY(-1px);
         }
 
@@ -977,7 +981,7 @@
                         🔗 프로젝트 보기
                     </a>
                     <button class="btn btn-like ${likedProjects[projectId] ? 'liked' : ''}" data-id="${projectId}">
-                        <span class="like-icon">${likedProjects[projectId] ? '♥' : '♡'}</span>
+                        <span class="like-icon">${likedProjects[projectId] ? '♥︎' : '♡'}</span>
                         <span class="like-count">${likeCount}</span>
                     </button>
                 </div>
@@ -1095,14 +1099,14 @@
                                 likes[projectId] = (likes[projectId] || 0) + 1;
                                 likedProjects[projectId] = true;
                                 btn.classList.add('liked');
-                                btn.querySelector('.like-icon').textContent = '♥';
+                                btn.querySelector('.like-icon').textContent = '♥︎';
                                 btn.querySelector('.like-count').textContent = likes[projectId];
                             }
                         } else {
                             likes[projectId] = (likes[projectId] || 0) + 1;
                             likedProjects[projectId] = true;
                             btn.classList.add('liked');
-                            btn.querySelector('.like-icon').textContent = '♥';
+                            btn.querySelector('.like-icon').textContent = '♥︎';
                             btn.querySelector('.like-count').textContent = likes[projectId];
                             saveDataLocal('likes', likes);
                             saveDataLocal('likedProjects_' + deviceId, likedProjects);
@@ -1176,7 +1180,7 @@
                                         <div class="comment-text">${text}</div>
                                         <div class="comment-time">${commentData.time}</div>
                                     </div>
-                                    <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${newComment.id}" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">삭제</button>
+                                    <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${newComment.id}">삭제</button>
                                 </div>
                             `;
                             commentsList.appendChild(commentItem);
@@ -1211,7 +1215,7 @@
                                     <div class="comment-text">${text}</div>
                                     <div class="comment-time">${time}</div>
                                 </div>
-                                <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${commentId}" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">삭제</button>
+                                <button class="comment-delete-btn" data-project-id="${projectId}" data-comment-id="${commentId}">삭제</button>
                             </div>
                         `;
                         commentsList.appendChild(commentItem);
