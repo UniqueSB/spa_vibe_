@@ -242,6 +242,18 @@
             flex-wrap: wrap;
         }
 
+        .project-access-note {
+            margin-top: -4px;
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid #f6d79d;
+            background: #fff8e7;
+            color: #7c4a03;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
         .btn {
             padding: 11px 18px;
             border: 1px solid transparent;
@@ -733,7 +745,8 @@
                 title: 'Contract Intelligence',
                 author: '강보배',
                 description: '<strong>AI 분석</strong><br>• 계약서 핵심 조항과 리스크 포인트를 빠르게 구조화하는 실무형 리걸테크<br>• 리뷰 시간 단축과 검토 일관성 확보에 강점이 있는 B2B 업무 지원 도구<br>• 예외 조항 탐지와 설명 정확도가 누적될수록 도입 효과가 커질 프로젝트',
-                url: 'https://contract-intelligence-final3.vercel.app'
+                url: 'https://contract-intelligence-final3.vercel.app',
+                accessPassword: 'spa본부'
             },
             {
                 id: 'f6',
@@ -748,7 +761,7 @@
             { num: 1, title: 'KT 직원을 위한 오늘의 AI 점심 메뉴 추천기', author: '김세준', description: 'KT 광화문 주변 132개 맛집에서 실시간 날씨와 기분 상태를 고려한 AI 맞춤형 점심 메뉴 추천 서비스 (AI 분석)', url: 'https://kt-lunch.vercel.app' },
             { num: 2, title: 'AI 미니미 룸 빌더', author: '최병찬', description: '셀카 한 장으로 10초 만에 5가지 스타일의 미니어처 아바타를 생성하고 가상 공간을 꾸밀 수 있는 감성 SNS 콘텐츠 제작 툴 (AI 분석)', url: 'https://myminiroom.vercel.app' },
             { num: 3, title: 'QuantView AI Screener', author: '서진우', description: '미국 주식 시장(S&P 500, DOW, NASDAQ) 실시간 데이터 제공 및 섹터별 P/E 분석 대시보드로 투자 의사결정 지원 (AI 분석)', url: 'https://v0-market-dashboard-vibe.vercel.app' },
-            { num: 4, title: 'EPIC*: The 10-Year Blueprint', author: '설재한', description: '15문항 10분 설문으로 120개월(10년) 유학 로드맵을 설계하는 AI 유학 컨설팅. 학교 추천부터 취업까지 생애주기 전체 관리 (AI 분석)', url: 'https://kt-seol.vercel.app/edupath/' },
+            { num: 4, title: 'EPIC*: The 10-Year Blueprint', author: '설재한, 최회림', description: '15문항 10분 설문으로 120개월(10년) 유학 로드맵을 설계하는 AI 유학 컨설팅. 학교 추천부터 취업까지 생애주기 전체 관리 (AI 분석)', url: 'https://kt-seol.vercel.app/edupath/' },
             { num: 5, title: 'LiBee - 어린이 도서 중고 직거래', author: '서무성', description: '0~3세부터 초등 고학년까지 연령대별 유아동 중고도서 직거래 마켓. 동네 이웃 간 안전한 책 거래 플랫폼 (AI 분석)', url: 'https://libee-one.vercel.app' },
             { num: 6, title: 'Running Vibe', author: '황진경', description: '러닝 케이던스(SPM)에 최적화된 음악 추천 서비스. 날씨, 코스 유형을 반영해 조깅부터 인터벌까지 맞춤형 플레이리스트 제공 (AI 분석)', url: 'https://v0-music-recommendation-app-mu.vercel.app/' },
             { num: 7, title: 'Multi-Agent System - 타로 상담', author: '권태우', description: '78장 타로 카드 기반 AI 상담 시스템. 3카드 스프레드와 켈틱 크로스 등 다양한 리딩 방식으로 자기성찰 도구 제공 (AI 분석)', url: 'https://vibecoding-project-001.vercel.app' },
@@ -1059,6 +1072,7 @@
                         <span class="like-count">${likeCount}</span>
                     </button>
                 </div>
+                ${project.accessPassword ? `<div class="project-access-note">🔐 접속 비밀번호: ${project.accessPassword}</div>` : ''}
                 <div class="comment-section">
                     <div class="comment-toggle" data-id="${projectId}">
                         💬 댓글 ${projectComments.length > 0 ? `(${projectComments.length})` : '쓰기'}
