@@ -237,10 +237,15 @@
 
         .btn-like {
             background: #ffffff;
-            border: 1px solid #f6b5c3;
-            color: var(--danger);
+            border: 1px solid #d5e2ef;
+            color: var(--ink-700);
             padding: 10px 16px;
             min-width: 76px;
+        }
+
+        .btn-like .like-icon {
+            font-weight: 700;
+            color: #64748b;
         }
 
         .btn-like.liked {
@@ -248,6 +253,10 @@
             color: #ffffff;
             border-color: var(--danger);
             box-shadow: 0 8px 20px rgba(225, 29, 72, 0.28);
+        }
+
+        .btn-like.liked .like-icon {
+            color: #ffffff;
         }
 
         .like-count {
@@ -968,7 +977,7 @@
                         🔗 프로젝트 보기
                     </a>
                     <button class="btn btn-like ${likedProjects[projectId] ? 'liked' : ''}" data-id="${projectId}">
-                        <span class="like-icon">❤️</span>
+                        <span class="like-icon">${likedProjects[projectId] ? '♥' : '♡'}</span>
                         <span class="like-count">${likeCount}</span>
                     </button>
                 </div>
@@ -1066,12 +1075,14 @@
                                 likes[projectId] = Math.max(0, (likes[projectId] || 0) - 1);
                                 likedProjects[projectId] = false;
                                 btn.classList.remove('liked');
+                                btn.querySelector('.like-icon').textContent = '♡';
                                 btn.querySelector('.like-count').textContent = likes[projectId];
                             }
                         } else {
                             likes[projectId] = Math.max(0, (likes[projectId] || 0) - 1);
                             likedProjects[projectId] = false;
                             btn.classList.remove('liked');
+                            btn.querySelector('.like-icon').textContent = '♡';
                             btn.querySelector('.like-count').textContent = likes[projectId];
                             saveDataLocal('likes', likes);
                             saveDataLocal('likedProjects_' + deviceId, likedProjects);
@@ -1084,12 +1095,14 @@
                                 likes[projectId] = (likes[projectId] || 0) + 1;
                                 likedProjects[projectId] = true;
                                 btn.classList.add('liked');
+                                btn.querySelector('.like-icon').textContent = '♥';
                                 btn.querySelector('.like-count').textContent = likes[projectId];
                             }
                         } else {
                             likes[projectId] = (likes[projectId] || 0) + 1;
                             likedProjects[projectId] = true;
                             btn.classList.add('liked');
+                            btn.querySelector('.like-icon').textContent = '♥';
                             btn.querySelector('.like-count').textContent = likes[projectId];
                             saveDataLocal('likes', likes);
                             saveDataLocal('likedProjects_' + deviceId, likedProjects);
